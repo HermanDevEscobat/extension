@@ -1,0 +1,45 @@
+{
+	"manifest_version": 3,
+	"name": "Nova",
+	"description": "Автоматизатор узлов работы OffPvz",
+	"update_url": "https://clients2.google.com/service/update2/crx",
+	"version": "2.0.3",
+	"author": "Komandor",
+	"icons": {
+		"16": "icon.png",
+		"48": "icon.png",
+		"128": "icon.png"
+	},
+	"action": {
+		"default_title": "Расширения для работы c OffPvz",
+		"default_popup": "popup.html"
+	},
+	"background": {
+    "service_worker": "background.js"
+  },
+	"content_scripts": [
+		{
+			"matches": [
+				"http://*/pvz/*",
+				"http://*/login"
+			],
+			"js": [
+				"content.js",
+				"popup.js"
+			],
+			"css": [
+				"nova-style.css"
+			]
+		}
+	],
+	"permissions": [
+		"storage"
+	],
+	"host_permissions": [
+		"http://*/", "https://www.wildberries.ru/*"
+	  ],
+	  "web_accessible_resources": [ {
+		"resources": [ "nova-index.html", "alarm.mp3" ],
+		"matches": [ "<all_urls>" ]
+	  }]
+}

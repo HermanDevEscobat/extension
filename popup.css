@@ -1,0 +1,86 @@
+/* Color start animation elem #ababab */
+/* Color end animation elem #ff0037 */
+/* Color background #343a40 */
+/* div {
+  border: 0.5px solid red;
+} */
+
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+a {
+  color: #00bfff;
+}
+
+body {
+  background: #343a40;
+  min-height: 100vh;
+  width: 200px;
+  font-size: 14px;
+  font-family: sans-serif;
+  color: #ababab;
+}
+
+[class^="item"] {
+  display: grid;
+  place-items: center;
+}
+
+.gen_cont {
+  display: grid;
+  height: 100vh;
+  gap: 10px;
+  padding: 10px;
+  grid-template-areas:
+    "A A A A    A A A A    A A A A"
+    "B B B B    B B C C    C C C C"
+    "D D D D    D D E E    E E E E"
+    "F F F F    F F G G    G G G G"
+    "H H H H    H H H H    H H H H"
+    "I I I I    I I I I    I I I I";
+}
+
+.item1 {
+  grid-area: A;
+  font-weight: bold;
+  font-size: 17px;
+}
+
+.item2 {
+  grid-area: B;
+  justify-self: start;
+}
+
+.item3 {
+  grid-area: C;
+}
+
+.item4 {
+  grid-area: D;
+  justify-self: start;
+}
+
+.item5 {
+  grid-area: E;
+}
+
+.item6 {
+  grid-area: F;
+  justify-self: start;
+}
+
+.item7 {
+  grid-area: G;
+}
+
+.item8 {
+  grid-area: H;
+}
+
+.item9 {
+  grid-area: I;
+  font-size: 11px;
+  padding-bottom: 10px;
+}
