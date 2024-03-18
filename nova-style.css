@@ -13,6 +13,15 @@
     width: 50px;
     z-index: 1;
 }
+.startMenu2 {
+    position: fixed;
+    right: 0;
+    top: 0;
+    background: #001529;
+    height: 100%;
+    width: 50px;
+    z-index: 1;
+}
 
 .startMenu .iconMenu {
     fill: #ababab;
