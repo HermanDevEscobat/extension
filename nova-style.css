@@ -96,6 +96,9 @@
 /* --------------------------------------------- */
 .novaMenu-1.open .content-1 {
     display: block;
+    position: fixed; 
+    top: 50%;
+    transform: translateY(-50%);
     width: 500px;
     height: 500px;
     right: 70px;
@@ -122,22 +125,24 @@
 .content_cnt_item-1 {
     grid-area:  B;
     overflow-y: auto;
+    overflow-x: auto;
     pointer-events: auto;
     height: 450px;
 }
 
 .content_cnt_item-1::-webkit-scrollbar {
     width: 10px;
+    height: 10px;
 }
 
 .content_cnt_item-1::-webkit-scrollbar-track {
     background-color: #f1f1f1;
-    border-radius: 5px;
+    border-radius: 25px;
 }
 
 .content_cnt_item-1::-webkit-scrollbar-thumb {
     background-color: #888;
-    border-radius: 5px;
+    border-radius: 25px;
 }
 
 .content_cnt_item-1::-webkit-scrollbar-thumb:hover {
@@ -145,8 +150,8 @@
 }
 
 .content_cnt_item-1_star {
-    width: 2em;
-    height: 2em;
+    width: 1.5em;
+    height: 1.5em;
     fill:#965eeb;
 }
 .content_cnt_item-1_user-id_link {
@@ -157,6 +162,9 @@
 /* --------------------------------------------- */
 .novaMenu-2.open .content-2 {
     display: block;
+    position: fixed; 
+    top: 50%;
+    transform: translateY(-50%);
     width: 200px;
     height: 100px;
     right: 70px;
@@ -203,6 +211,9 @@
 /* --------------------------------------------- */
 .novaMenu-3.open .content-3 {
     display: block;
+    position: fixed; 
+    top: 50%;
+    transform: translateY(-50%);
     width: 200px;
     right: 70px;
 }
@@ -282,6 +293,9 @@
 /* --------------------------------------------- */
 .novaMenu-4.open .content-4 {
     display: block;
+    position: fixed; 
+    top: 50%;
+    transform: translateY(-50%);
     background: #001529;
     right: 70px;
     width: 200px;
@@ -404,6 +418,9 @@
 
 .novaMenu-5.open .content-5 {
     display: block;
+    position: fixed; 
+    top: 50%;
+    transform: translateY(-50%);
     right: 70px;
     width: 300px;
     height: 300px;

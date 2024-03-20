@@ -4,7 +4,7 @@
 	"description": "Автоматизатор узлов работы OffPvz",
 	"update_url": "https://clients2.google.com/service/update2/crx",
 	"version": "2.0.3",
-	"author": "Komandor",
+	"author": "Gipsy",
 	"icons": {
 		"16": "icon.png",
 		"48": "icon.png",
