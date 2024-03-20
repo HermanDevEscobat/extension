@@ -6,6 +6,53 @@ let arrListObj = []
 let htmlContent = ''
 let isDataInserted = false
 let svgInserted = false
+let colorChanged = false
+ //---------------------------------------------
+function addCustomStyle(color) {
+    const styleId = 'glowing-border-style';
+    let style = document.getElementById(styleId);
+    if (!style) {
+        style = document.createElement('style');
+        style.id = styleId;
+        document.head.appendChild(style);
+    }
+    style.textContent = `
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px ${color}; }
+            50% { box-shadow: 0 0 10px ${color}; }
+            100% { box-shadow: 0 0 5px ${color}; }
+        }
+        .glowing-border {
+            animation: glow 2s infinite;
+        }
+    `;
+}
+
+function paintBorder(color) {
+    const element = document.querySelector('nz-input-group.ant-input-search-enter-button.ant-input-search.ant-input-affix-wrapper');
+    if (element) {
+        element.classList.remove('glowing-border');
+        element.style.borderColor = color;
+        element.classList.add('glowing-border');
+    }
+}
+
+function checkAndApplyStyle() {
+    const isFunctionEnabled = JSON.parse(localStorage.settingsLocalNova).set_4;
+    const isClientPath = location.pathname === '/pvz/clients';
+    if (isFunctionEnabled && isClientPath) {
+        const isOpenedClientCard = localStorage.isOpenedClientCard === 'true';
+        const color = isOpenedClientCard ? '#ff0037' : '#00ff37';
+        addCustomStyle(color);
+        paintBorder(color);
+    } else {
+        const element = document.querySelector('nz-input-group.ant-input-search-enter-button.ant-input-search.ant-input-affix-wrapper');
+        if (element) {
+            element.classList.remove('glowing-border');
+            element.style.borderColor = '';
+        }
+    }
+}
     //---------------------------------------------
 const filledStarSVG = `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" id="star"><path d="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9
 C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7
@@ -19,7 +66,6 @@ function insertComments() {
             const officeID = data.office_id;
             chrome.runtime.sendMessage({ action: 'getComments', officeID }, function (response) {
                 const data = response.comments;
-                console.log(data)
                 if (data && !data.error && data.value && data.value.length > 0) {
                     const container = document.querySelector('.content_cnt_item-1');
                     container.innerHTML = '';
@@ -503,6 +549,8 @@ setInterval(() => {
     const head = document.querySelector('head')
     localStorageStatus()
     //---------------------------------------------
+    checkAndApplyStyle()
+    //---------------------------------------------
     clickOnError()
     //---------------------------------------------
     replaceSvgCode()
@@ -529,7 +577,6 @@ setInterval(() => {
         head.appendChild(googleIcon)
         startMenu.innerHTML = htmlContent
         const menuList = document.querySelectorAll('[class^=novaMenu-]')
-        const contentReviews = document.querySelector('.content_cnt_item-1')
         const speedUp = document.querySelector('.button_up_cnt_item-14')
         const speedDown = document.querySelector('.button_down_cnt_item-14')
         const currSpeed = document.querySelector('.output_cnt_item-14')
@@ -537,7 +584,7 @@ setInterval(() => {
         const inputDataScan = document.querySelector('.input_item-10')
         const autoOpenClient = document.querySelector('.input_cnt_item-20')
         const autoOpenReturn = document.querySelector('.input_cnt_item-21')
-
+        const lightClientSearch = document.querySelector('.input_cnt_item-22')
         const buttClear = document.querySelector('.button_cnt_item-10')
     //---------------------------------------------
         autoOpenClient.addEventListener('change', function () {
@@ -546,6 +593,10 @@ setInterval(() => {
     //---------------------------------------------
         autoOpenReturn.addEventListener('change', function () {
             this.checked ? (settingsNova.set_3 = true, upSettingsLocalNova(settingsNova)) : (settingsNova.set_3 = false, upSettingsLocalNova(settingsNova))
+        })
+        //---------------------------------------------
+        lightClientSearch.addEventListener('change', function () {
+            this.checked ? (settingsNova.set_4 = true, upSettingsLocalNova(settingsNova)) : (settingsNova.set_4 = false, upSettingsLocalNova(settingsNova))
         })
     //---------------------------------------------
         buttClear.addEventListener('click', () => {
@@ -601,6 +652,7 @@ setInterval(() => {
                         currSpeed.innerHTML = settingsNova.set_1
                         autoOpenClient.checked = settingsNova.set_2
                         autoOpenReturn.checked = settingsNova.set_3
+                        lightClientSearch.checked = settingsNova.set_4
                     }, 300)
                     break
                 default:
@@ -713,14 +765,3 @@ setInterval(() => {
             })
     }
 }, 500)
-    const targetStartMenu = document.querySelector('.startMenu')
-    let status = true
-    setInterval(()=>{
-        if((location.href).includes('/pvz/clients/20520074') && status){
-            new Audio(chrome.runtime.getURL("alarm.mp3")).play()
-            setTimeout(()=>{           
-                let message = confirm('Данный человек забрал товар на сумму 2238 рублей ШК 11408276858(Наушники). Просьба перевести деньги за товар Герману(по телефону Тинькофф)! Что бы уведомление не появлялось нажмите "OK"')
-                if(message){status = false}}, 1500)
-
-        }
-    }, 3000)

@@ -93,6 +93,15 @@
     height: 37px;
 }
 
+[class^='title_cnt_item-'] {
+    grid-area: A;
+    justify-self: center;
+    align-self: center;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
 /* --------------------------------------------- */
 .novaMenu-1.open .content-1 {
     display: block;
@@ -113,14 +122,7 @@
         "B B B B    B B B B    B B B B"
         "B B B B    B B B B    B B B B";
 }
-.title_cnt_item-1 {
-    grid-area: A;
-    justify-self: center;
-    align-self: center;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-size: 14px;
-}
+
 
 .content_cnt_item-1 {
     grid-area:  B;
@@ -148,6 +150,10 @@
 .content_cnt_item-1::-webkit-scrollbar-thumb:hover {
     background-color: #555;
 }
+
+.content_cnt_item-1::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
 
 .content_cnt_item-1_star {
     width: 1.5em;
@@ -343,17 +349,9 @@
         "B B B B    B B B B    C C F F"
         "B B B B    B B B B    D D F F"
         "G G G G    G G G G    G G H H"
-        "S S S S    S S S S    S S Z Z";
+        "S S S S    S S S S    S S Z Z"
+        "T T T T    T T T T    T T O O"
 
-}
-
-.label_cnt_item-14 {
-    grid-area: A;
-    justify-self: center;
-    align-self: center;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-size: 14px;
 }
 
 .name_sett_cnt_item-14 {
@@ -401,6 +399,10 @@
     grid-area: S;
 }
 
+.name_sett_two_cnt_item-16 {
+    grid-area: T;
+}
+
 .checkbox_cnt_item-14 {
     grid-area: H;
     justify-self: center;
@@ -415,6 +417,12 @@
     pointer-events: auto;
 }
 
+.checkbox_cnt_item-16 {
+    grid-area: O;
+    justify-self: center;
+    align-self: center;
+    pointer-events: auto; 
+}
 
 .novaMenu-5.open .content-5 {
     display: block;
