@@ -1,9 +1,3 @@
-/*.material-symbols-outlined {
-    color: #ababab;
-    user-select: none !important;
-    line-height: 0 !important;
-}
-*/
 .startMenu {
     position: fixed;
     right: 0;
@@ -13,6 +7,7 @@
     width: 50px;
     z-index: 1;
 }
+
 .startMenu .iconMenu {
     fill: #ababab;
     height: 30px;
@@ -40,29 +35,14 @@
     color: #ababab;
 }
 
-.novaMenu-1.open #key {
-    fill: #965eeb;
-    transition: 0.4s;
-}
-
-.novaMenu-2.open #bolt {
-    fill: #965eeb;
-    transition: 0.4s;
-}
-
-.novaMenu-3.open #radar {
-    fill: #965eeb;
-    transition: 0.4s;
-}
-
-.novaMenu-4.open #monitoring {
-    fill: #965eeb;
-    transition: 0.4s;
-}
-
+.novaMenu-1.open #key,
+.novaMenu-2.open #bolt,
+.novaMenu-3.open #radar,
+.novaMenu-4.open #monitoring,
 .novaMenu-5.open #settings {
-    fill: #965eeb;
+    fill: #ff0037;
     transition: 0.4s;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 55, 0.8));
 }
 
 [class^='novaMenu-'] {
@@ -89,10 +69,10 @@
     background: none;
     border-radius: 20px;
     font-size: 16px;
-    color: #555; /* Темно-серый цвет текста */
+    color: #555;
     background: #f1f1f1;
     height: 25px;
-    width: 100%; /* Ширина автоматически подбирается */
+    width: 100%;
 }
 
 [class^='title_cnt_item-'] {
@@ -107,7 +87,7 @@
 /* --------------------------------------------- */
 .novaMenu-1.open .content-1 {
     display: block;
-    position: fixed; 
+    position: fixed;
     top: 50%;
     transform: translateY(-50%);
     width: 500px;
@@ -116,9 +96,24 @@
     border-radius: 20px;
     background: #001529;
 }
+.nova_loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #ff0037;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
 
+  @keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
 .cnt_item-1 {
-    margin:10px;
+    margin: 10px;
     grid-template-areas:
         "A A A A    A A A A    A A A A"
         "B B B B    B B B B    B B B B"
@@ -127,7 +122,7 @@
 
 
 .content_cnt_item-1 {
-    grid-area:  B;
+    grid-area: B;
     overflow-y: auto;
     overflow-x: auto;
     pointer-events: auto;
@@ -155,22 +150,24 @@
 
 .content_cnt_item-1::-webkit-scrollbar-corner {
     background-color: transparent;
-  }
+}
 
 .content_cnt_item-1_star {
     width: 1.5em;
     height: 1.5em;
-    fill:#965eeb;
+    fill: #ffd700;
 }
+
 .content_cnt_item-1_user-id_link {
     cursor: pointer;
     text-decoration: underline;
     color: #1890ff;
 }
+
 /* --------------------------------------------- */
 .novaMenu-2.open .content-2 {
     display: block;
-    position: fixed; 
+    position: fixed;
     top: 50%;
     transform: translateY(-50%);
     right: 70px;
@@ -186,10 +183,12 @@
         "C C C C    C C C C    C C C C"
         "D D D D    D D D D    D D D D";
 }
+
 .input_item-6 {
     padding-left: 10px;
     padding-right: 10px;
 }
+
 .input_cnt_item-6 {
     grid-area: B;
     width: auto;
@@ -212,31 +211,74 @@
     color: #00ff37;
 }
 
-
 /* --------------------------------------------- */
 .novaMenu-3.open .content-3 {
     display: block;
-    position: fixed; 
+    position: fixed;
     top: 50%;
     transform: translateY(-50%);
-    width: 200px;
     right: 70px;
 }
+
 .head_cnt_item-3 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 70px;
-    width: 200px;
     border-radius: 20px;
     background: #001529;
 }
+
 .cnt_item-10 {
+    gap: 0px;
+    column-gap: 10px;
     margin: 10px;
     grid-template-areas:
-        "A A A A    A A A A    A A A A"
-        "B B B B    B B B B    B B B B";
+        "A A A A    A A A A    A A A A    A A A A"
+        "B B B B    B B B B    B B D D    C C F F"
+        "B B B B    B B B B    B B D D    E E F F";
+}
+
+.input_cnt_item-10 {
+    grid-area: B;
+    justify-self: center;
+    align-self: center;
+}
+
+.button_up_cnt_item-14 {
+    grid-area: C;
+    height: auto;
+    width: auto;
+    justify-self: center;
+    align-self: center;
+    pointer-events: auto;
+}
+
+.button_up_cnt_item-14 :hover {
+    fill: #ff0037;
+    transition: 0.4s;
+}
+
+.output_cnt_item-14 {
+    grid-area: D;
+    width: 20px;
+    text-align: center;
+    justify-self: center;
+    align-self: center;
+}
+
+.button_down_cnt_item-14 {
+    grid-area: E;
+    height: auto;
+    width: auto;
+    justify-self: center;
+    align-self: center;
+    pointer-events: auto;
+}
+
+.button_down_cnt_item-14 :hover {
+    fill: #ff0037;
+    transition: 0.4s;
 }
 
 .input_item-10 {
@@ -244,23 +286,11 @@
     padding-right: 10px;
 }
 
-.input_cnt_item-10 {    
-    grid-area: B;
-}
-
-/* .output_cnt_item-10 {
-    grid-area: C;
-} */
-
 .button_cnt_item-10 {
-    display: none;
+    grid-area: F;
+    justify-self: center;
+    align-self: center;
     pointer-events: auto;
-    background: #001529;
-    border-radius: 20px;
-    width: 200px;
-    height: 40px;
-    text-align: center;
-    line-height: 60px;
 }
 
 .button_cnt_item-10 :hover {
@@ -270,16 +300,16 @@
 
 [class^='itemShk_'] {
     display: grid;
-    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
     background: #001529;
     border-radius: 20px;
-    width: 200px;
-    height: 40px;
-    grid-template-columns: repeat(12, 1fr);
     justify-items: center;
     align-items: center;
     grid-template-areas:
-        "A A A    B B B    C C C    D D D";
+        "A A A A   B B B B   C C C C    D D D D";
+    height: 30px;
 }
 
 .cell {
@@ -308,7 +338,7 @@
 /* --------------------------------------------- */
 .novaMenu-4.open .content-4 {
     display: block;
-    position: fixed; 
+    position: fixed;
     top: 50%;
     transform: translateY(-50%);
     background: #001529;
@@ -330,7 +360,7 @@
 }
 
 .label_cnt_item-11 {
-        grid-area: A;
+    grid-area: A;
     justify-self: center;
     align-self: center;
     margin-bottom: 5px;
@@ -344,10 +374,6 @@
 
 .icon_cnt_item-11 {
     grid-area: C;
-}
-
-.icon_cnt_item-11 .material-symbols-outlined {
-    line-height: 50px !important;
 }
 
 /* --------------------------------------------- */
@@ -369,36 +395,7 @@
     align-self: center;
 }
 
-.button_up_cnt_item-14 {
-    grid-area: C;
-    height: 20px;
-    width: 20px;
-    justify-self: center;
-    pointer-events: auto;
-}
 
-.button_up_cnt_item-14 .material-symbols-outlined {
-    line-height: 20px !important;
-}
-
-.button_down_cnt_item-14 {
-    grid-area: D;
-    height: 20px;
-    width: 20px;
-    justify-self: center;
-    pointer-events: auto;
-}
-
-.button_down_cnt_item-14 .material-symbols-outlined {
-    line-height: 20px !important;
-}
-
-.output_cnt_item-14 {
-    grid-area: F;
-    width: 25px;
-    justify-self: center;
-    align-self: center;
-}
 
 .name_sett_two_cnt_item-14 {
     grid-area: G;
@@ -430,12 +427,12 @@
     grid-area: O;
     justify-self: center;
     align-self: center;
-    pointer-events: auto; 
+    pointer-events: auto;
 }
 
 .novaMenu-5.open .content-5 {
     display: block;
-    position: fixed; 
+    position: fixed;
     top: 50%;
     transform: translateY(-50%);
     right: 70px;

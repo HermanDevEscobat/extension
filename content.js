@@ -1,13 +1,51 @@
-    //red 0xFFF7020E
 const speedNumb = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3]
 let soundState = false
-let arrListUrl = []
+let arrPlayList = []
 let arrListObj = []
 let htmlContent = ''
 let isDataInserted = false
 let svgInserted = false
-let colorChanged = false
- //---------------------------------------------
+let settingsLocalNova = initializeSettings()
+//---------------------------------------------
+function initializeSettings() {
+    let settings = localStorage.getItem('extensionSettingsNova');
+    if (!settings) {
+        settings = {
+            version: '1.0', // Версия настроек
+            option1: 1.0,
+            option2: false,
+            option3: false,
+            option4: false,
+            option5: false,
+            option6: false,
+            option7: false,
+            option8: false,
+            option9: false,
+            option10: false
+        };
+
+        // Сохраняем настройки в localStorage
+        localStorage.setItem('extensionSettingsNova', JSON.stringify(settings));
+    } else {
+        // Если настройки уже есть, проверяем версию и мигрируем данные при необходимости
+        let parsedSettings = JSON.parse(settings);
+        if (parsedSettings.version !== '1.0') {
+            // Миграция данных для новой версии настроек
+            // Добавьте соответствующую логику миграции данных здесь
+
+            // Обновляем версию настроек
+            parsedSettings.version = '1.0';
+
+            // Сохраняем обновленные настройки в localStorage
+            localStorage.setItem('extensionSettingsNova', JSON.stringify(parsedSettings));
+        }
+    }
+
+    // Возвращаем объект настроек
+    return JSON.parse(localStorage.getItem('extensionSettingsNova'));
+}
+
+//---------------------------------------------
 function addCustomStyle(color) {
     const styleId = 'glowing-border-style';
     let style = document.getElementById(styleId);
@@ -38,7 +76,7 @@ function paintBorder(color) {
 }
 
 function checkAndApplyStyle() {
-    const isFunctionEnabled = JSON.parse(localStorage.settingsLocalNova).set_4;
+    const isFunctionEnabled = settingsLocalNova.option4;
     const isClientPath = location.pathname === '/pvz/clients';
     if (isFunctionEnabled && isClientPath) {
         const isOpenedClientCard = localStorage.isOpenedClientCard === 'true';
@@ -53,7 +91,7 @@ function checkAndApplyStyle() {
         }
     }
 }
-    //---------------------------------------------
+//---------------------------------------------
 const filledStarSVG = `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" id="star"><path d="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9
 C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7
 c0.1,0.1,0.3,0.1,0.5,0.1l0,0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1z"></path></svg>`;
@@ -75,7 +113,6 @@ function insertComments() {
                     data.value.forEach(comment => {
                         const listItem = document.createElement('li');
                         listItem.classList.add('comment-item');
-
                         const starsRating = document.createElement('div');
                         starsRating.classList.add('stars-rating');
 
@@ -127,7 +164,7 @@ function insertComments() {
                         commentsList.appendChild(listItem);
                     });
 
-                    
+
                     container.appendChild(commentsList);
                 } else {
                     console.error('Error fetching comments:', data.error);
@@ -139,14 +176,14 @@ function insertComments() {
         });
 }
 
-    //---------------------------------------------
+//---------------------------------------------
 function clickOnError() {
     const element = document.querySelector("nz-card.red.pem.ant-card.ant-card-bordered.ng-star-inserted span");
     if (element) {
         element.click();
     }
 }
-    //---------------------------------------------
+//---------------------------------------------
 function replaceSvgCode() {
     if (!svgInserted) {
         const svgCode = `
@@ -175,7 +212,7 @@ function replaceSvgCode() {
         </svg>
         </div>`;
         const anticonElement = document.querySelector('i.anticon.anticon-wb-shk-logo');
-        if(anticonElement){
+        if (anticonElement) {
             svgInserted = true;
             anticonElement.innerHTML = svgCode;
             const style = document.createElement('style');
@@ -250,7 +287,7 @@ function replaceSvgCode() {
         }
     }
 }
-    //---------------------------------------------
+//---------------------------------------------
 function listInfoBoxesUpdater() {
     if (location.href.includes('/pvz/acceptance') && document.querySelector('app-acceptance-box')) {
         const existingBoxes = document.querySelectorAll('div.box.ng-star-inserted');
@@ -262,72 +299,71 @@ function listInfoBoxesUpdater() {
             return;
         }
         fetch(`${location.origin}/api/boxes/accepted`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.length === 0) {
-                return;
-            }
-            const acceptanceBoxSection = document.querySelector('.acceptance-box__list');
-            const acceptedBoxesInfo = [];
-            data.forEach(item => {
-                acceptedBoxesInfo.push({
-                    boxName: item.boxName,
-                    isAccepted: item.isAccepted,
-                    shkCount: 0
-                });
-            });
-            fetch(`${location.origin}/api/items/inTransferBoxes`)
             .then(response => response.json())
-            .then(itemsData => {
-                itemsData.forEach(item => {
-                    const foundBox = acceptedBoxesInfo.find(box => String(box.boxName) === String(item.boxId));
-                    if (foundBox) {
-                        foundBox.shkCount = item.shkCount;
-                    }
+            .then(data => {
+                if (data.length === 0) {
+                    return;
+                }
+                const acceptanceBoxSection = document.querySelector('.acceptance-box__list');
+                const acceptedBoxesInfo = [];
+                data.forEach(item => {
+                    acceptedBoxesInfo.push({
+                        boxName: item.boxName,
+                        isAccepted: item.isAccepted,
+                        shkCount: 0
+                    });
                 });
-                const boxes = document.querySelectorAll('div.box.ng-star-inserted');
-                boxes.forEach((box, index) => {
-                    const boxInfo = acceptedBoxesInfo[index];
-                                if (boxInfo && boxInfo.isAccepted) { // Проверяем, ящик принят или нет
-                                    const boxNumberDiv = box.querySelector('.box__number');
-                                    const boxDateDiv = box.querySelector('.box__date.ng-star-inserted');
-                                    const showCountShkDiv = document.createElement('div');
-                                    showCountShkDiv.classList.add('showCountShk');
-                                    showCountShkDiv.innerText = boxInfo.shkCount;
-                                    boxNumberDiv.parentNode.insertBefore(showCountShkDiv, boxDateDiv);
-                                    const viewLink = document.createElement('a');
-                                    viewLink.href = `${location.origin}/pvz/location-items/${boxInfo.boxName}/1`;
-                                    viewLink.innerText = 'Просмотреть';
-                                    viewLink.target = '_blank';
-                                    const linkButton = document.createElement('button');
-                                    linkButton.classList.add('ant-btn', 'ant-btn-primary', 'ant-btn-background-ghost', 'ng-star-inserted');
-                                    linkButton.appendChild(viewLink);
-                                    linkButton.style.cssText = `
+                fetch(`${location.origin}/api/items/inTransferBoxes`)
+                    .then(response => response.json())
+                    .then(itemsData => {
+                        itemsData.forEach(item => {
+                            const foundBox = acceptedBoxesInfo.find(box => String(box.boxName) === String(item.boxId));
+                            if (foundBox) {
+                                foundBox.shkCount = item.shkCount;
+                            }
+                        });
+                        const boxes = document.querySelectorAll('div.box.ng-star-inserted');
+                        boxes.forEach((box, index) => {
+                            const boxInfo = acceptedBoxesInfo[index];
+                            if (boxInfo && boxInfo.isAccepted) { // Проверяем, ящик принят или нет
+                                const boxNumberDiv = box.querySelector('.box__number');
+                                const boxDateDiv = box.querySelector('.box__date.ng-star-inserted');
+                                const showCountShkDiv = document.createElement('div');
+                                showCountShkDiv.classList.add('showCountShk');
+                                showCountShkDiv.innerText = boxInfo.shkCount;
+                                boxNumberDiv.parentNode.insertBefore(showCountShkDiv, boxDateDiv);
+                                const viewLink = document.createElement('a');
+                                viewLink.href = `${location.origin}/pvz/location-items/${boxInfo.boxName}/1`;
+                                viewLink.innerText = 'Просмотреть';
+                                viewLink.target = '_blank';
+                                const linkButton = document.createElement('button');
+                                linkButton.classList.add('ant-btn', 'ant-btn-primary', 'ant-btn-background-ghost', 'ng-star-inserted');
+                                linkButton.appendChild(viewLink);
+                                linkButton.style.cssText = `
                                     height: 36px;
                                     border-radius: 4px;
                                     margin-left: auto;`
-                                    const boxFioDiv = box.querySelector('.box__fio.ng-star-inserted');
-                                    boxFioDiv.parentNode.insertBefore(linkButton, boxFioDiv.nextSibling);
-                                }
-                            });
+                                const boxFioDiv = box.querySelector('.box__fio.ng-star-inserted');
+                                boxFioDiv.parentNode.insertBefore(linkButton, boxFioDiv.nextSibling);
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Ошибка получения информации о ШК в ящиках:', error));
             })
-            .catch(error => console.error('Ошибка получения информации о ШК в ящиках:', error));
-        })
-        .catch(error => console.error('Ошибка получения информации о принятых ящиках:', error));
+            .catch(error => console.error('Ошибка получения информации о принятых ящиках:', error));
     }
 }
-
-
-    //---------------------------------------------
+//---------------------------------------------
 function listInfoClientUpdater() {
+
     if (location.href.includes('/pvz/clients-in-office')) {
         if (!isDataInserted) {
+            isDataInserted = true;
             getUsersInOfficeAndProcessData().then(data => {
                 if (data.length !== 0) {
                     const rows = document.querySelectorAll('tbody.ant-table-tbody tr');
                     rows.forEach((row, index) => {
                         const thirdTd = row.querySelector('td:nth-child(3)');
-                        isDataInserted = true;
                         if (thirdTd && !thirdTd.querySelector('div')) {
                             const gridContainer = document.createElement('div');
                             gridContainer.style.display = 'flex';
@@ -346,7 +382,7 @@ function listInfoClientUpdater() {
                         }
                     });
                 } else {
-                    console.log('Результат функции getUsersInOfficeAndProcessData() равен 0.');
+                    return
                 }
             }).catch(error => {
                 console.error('Ошибка:', error);
@@ -356,7 +392,7 @@ function listInfoClientUpdater() {
         isDataInserted = false;
     }
 }
-    //---------------------------------------------
+//---------------------------------------------
 async function getUsersInOfficeAndProcessData() {
     try {
         const responseUsers = await fetch(`${location.origin}/api/users/in-office/get`);
@@ -394,9 +430,7 @@ async function getUsersInOfficeAndProcessData() {
         return [];
     }
 }
-
-
-    //---------------------------------------------
+//---------------------------------------------
 function cleanArray(arr) {
     const uniqueLocationIds = new Set();
     const result = [];
@@ -416,7 +450,7 @@ function cleanArray(arr) {
 
     return result;
 }
-    //---------------------------------------------
+//---------------------------------------------
 function clickSearchAndReturnClient(selector) {
     const table = document.querySelector(selector);
     const isClientSearch = 'По данному запросу мы ничего не нашли\nПопробуйте другие варианты'
@@ -424,73 +458,54 @@ function clickSearchAndReturnClient(selector) {
 
     if (table) {
         const rows = table.querySelectorAll('tr');
-        if((location.pathname === '/pvz/clients' && JSON.parse(localStorage.settingsLocalNova).set_2) || (location.pathname === '/pvz/product-returns/client-search' && JSON.parse(localStorage.settingsLocalNova).set_3)){
-            if(rows.length === 2){
-                if(rows[1].outerText != isClientSearch ||  rows[1].outerText != isCleintReturn){
+        if ((location.pathname === '/pvz/clients' && settingsLocalNova.option2) || (location.pathname === '/pvz/product-returns/client-search' && settingsLocalNova.option3)) {
+            if (rows.length === 2) {
+                if (rows[1].outerText != isClientSearch || rows[1].outerText != isCleintReturn) {
                     rows[1].click()
                 }
             }
         }
     }
 }
-    //---------------------------------------------
+//---------------------------------------------
 async function getContent() {
     await fetch(chrome.runtime.getURL('/nova-index.html')).then(r => r.text()).then(html => {
         htmlContent = html
     })
 }
 getContent()
-    //---------------------------------------------
-function localStorageStatus() {
-    if (!localStorage.settingsLocalNova) {
-        localStorage.setItem('settingsLocalNova', JSON.stringify({
-            'set_1': 1,
-            'set_2': false,
-            'set_3': false,
-            'set_4': false,
-            'set_5': false,
-            'set_6': false,
-            'set_7': false,
-            'set_8': false,
-            'set_9': false,
-            'set_10': false
-        }))
-    }
-}
-    //---------------------------------------------
+//---------------------------------------------
 async function decodeShk(shk) {
     return (await fetch(`${location.origin}/api/shk/decode?shk=${encodeURIComponent(shk)}`).then(resp => resp.json()).then(data => {
         return data.shk
     }))
 }
-    //---------------------------------------------
+//---------------------------------------------
 async function searchShk(shk) {
     return (await fetch(`${location.origin}/api/items/search?input=${encodeURIComponent(shk)}`).then(resp => resp.json()).then(data => {
         return data
     }))
 }
-    //---------------------------------------------
+//---------------------------------------------
 async function getRemainsShk() {
     const remainsShk = document.querySelector('.output_cnt_item-6');
     if (remainsShk) {
         await fetch(`${location.origin}/api/report/shk`)
-        .then(resp => resp.json())
-        .then(data => {
-            setTimeout(() => {
-                remainsShk.innerHTML = data.onTransferCount;
-            }, 5000);
-        });
+            .then(resp => resp.json())
+            .then(data => {
+                setTimeout(() => {
+                    remainsShk.innerHTML = data.onTransferCount;
+                }, 5000);
+            });
     }
 }
-    //---------------------------------------------
-function getSettingsLocalNova() {
-    return JSON.parse(localStorage.settingsLocalNova)
+//---------------------------------------------
+function updateSetting(optionName, newValue) {
+    let settings = JSON.parse(localStorage.getItem('settingsLocalNova')) || {};
+    settings[optionName] = newValue;
+    localStorage.setItem('settingsLocalNova', JSON.stringify(settings));
 }
-    //---------------------------------------------
-function upSettingsLocalNova(a) {
-    localStorage.settingsLocalNova = JSON.stringify(a)
-}
-    //---------------------------------------------
+//---------------------------------------------
 function groupShk(arr) {
     return arr.reduce((acc, obj) => {
         const key = obj["locationId"]
@@ -501,13 +516,11 @@ function groupShk(arr) {
         }
     }, {})
 }
-    //---------------------------------------------
-function getShkFromArrObject(a) {
-    return a.reduce((acc, curr) => {
-        return [...acc, curr.shkId]
-    }, [])
+//---------------------------------------------
+function checkShkExists(arrListObj, shkId) {
+    return arrListObj.some(item => item.shkId === shkId);
 }
-    //---------------------------------------------
+//---------------------------------------------
 function viewShkElements(a) {
     const viewModul = document.querySelector('.output_shk-item-10')
     let objSortedShk = groupShk(a)
@@ -519,19 +532,10 @@ function viewShkElements(a) {
     viewModul.innerHTML = ''
     viewModul.innerHTML = itemsView
 }
-    //---------------------------------------------
-function clearShkElements() {
-    const buttClear = document.querySelector('.button_cnt_item-10')
-    const viewModul = document.querySelector('.output_shk-item-10')
-    viewModul.innerHTML = ''
-    itemsView = ''
-    arrListObj = []
-    buttClear.style.display = 'none'
-}
-    //---------------------------------------------
+//---------------------------------------------
 function soundPlayer(a) {
     if (!a.length || soundState) return
-        audio = new Audio(a.shift())
+    audio = new Audio(a.shift())
     audio.onplay = function () {
         soundState = true
     };
@@ -539,15 +543,175 @@ function soundPlayer(a) {
         soundState = false
         soundPlayer(a)
     };
-    audio.playbackRate = getSettingsLocalNova().set_1
+    audio.playbackRate = settingsLocalNova.option1
     audio.play()
 }
-    //---------------------------------------------
+//---------------------------------------------
+function filterShk() {
+    const inputItem = document.querySelector('.input_item-6')
+    const inputWavebraker = document.querySelector('input.ant-input.ant-input-lg.ng-pristine.ng-valid.ng-star-inserted.ng-touched');
+
+    setTimeout(() => {
+        if (inputItem && inputWavebraker) {
+            inputItem.focus();
+            inputWavebraker.addEventListener('focus', () => {
+                inputItem.focus();
+            });
+        }
+    }, 300);
+
+    inputItem.addEventListener('keypress', async function (event) {
+        if (event.key === 'Enter') {
+            let v = inputItem.value.replace(/\s/g, '');
+            if (location.href.includes('acceptance')) {
+                const inpWave = document.querySelector('.wavebreaker__scan input');
+                const buttWave = document.querySelector('.wavebreaker__scan button');
+
+                if ((v.length == 8 && v[0] == '*') || (v.length == 9 && v[0] == '*') || (v.length == 12 && v.slice(0, 4) == 'SAFP') || (v.length == 9 && v[0] == '!')) {
+                    let s = await searchShk(v);
+                    if (s.length) {
+                        if ([6, 3, 1].includes(s[0].locationTypeId)) {
+                            inpWave.value = v;
+                            inpWave.dispatchEvent(new Event('input', { bubbles: true }));
+                            buttWave.click();
+                        } else {
+                            handleError('locationTypeId');
+                        }
+                    } else {
+                        handleError('notFound');
+                    }
+                } else if (v.includes('OPLC') || v.includes('WVBR')) {
+                    inpWave.value = v;
+                    inpWave.dispatchEvent(new Event('input', { bubbles: true }));
+                    buttWave.click();
+                } else {
+                    handleError('invalid');
+                }
+            } else {
+                alert('Error: Перейдите в окно волнореза!');
+            }
+            inputItem.value = '';
+        }
+    });
+
+    function handleError(errorType) {
+        let errorMessage;
+        switch (errorType) {
+            case 'locationTypeId':
+                errorMessage = 'Error: В пакете нет --> locationTypeId';
+                break;
+            case 'notFound':
+                errorMessage = 'Error: Данного ШК нет на пвз. Массив пуст(';
+                break;
+            case 'invalid':
+                errorMessage = 'Error: ШК не проходит по условию или это баркод';
+                break;
+        }
+        arrPlayList.push('speech/error');
+        soundPlayer(arrPlayList);
+        console.log(errorMessage);
+    }
+}
+//---------------------------------------------
+function shkPicker() {
+    const buttClear = document.querySelector('.button_cnt_item-10')
+    const inputDataScan = document.querySelector('.input_item-10')
+    const currSpeed = document.querySelector('.output_cnt_item-14')
+    const speedUp = document.querySelector('.button_up_cnt_item-14')
+    const speedDown = document.querySelector('.button_down_cnt_item-14')
+    currSpeed.innerHTML = settingsLocalNova.option1
+    speedUp.addEventListener('click', () => {
+        const currentSpeedIndex = speedNumb.findIndex(i => i === settingsLocalNova.option1);
+        if (currentSpeedIndex < speedNumb.length - 1) {
+            settingsLocalNova.option1 = speedNumb[currentSpeedIndex + 1];
+            updateSetting('option1', settingsLocalNova.option1);
+            currSpeed.innerHTML = settingsLocalNova.option1;
+        }
+    });
+
+    speedDown.addEventListener('click', () => {
+        const currentSpeedIndex = speedNumb.findIndex(i => i === settingsLocalNova.option1);
+        if (currentSpeedIndex > 0) {
+            settingsLocalNova.option1 = speedNumb[currentSpeedIndex - 1];
+            updateSetting('option1', settingsLocalNova.option1);
+            currSpeed.innerHTML = settingsLocalNova.option1;
+        }
+    });
+    setTimeout(() => {
+        if (inputDataScan) {
+            inputDataScan.focus();
+        }
+    }, 300);
+
+    inputDataScan.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            scanerShk();
+            inputDataScan.value = '';
+        }
+    });
+    function clearShkElements() {
+        const viewModul = document.querySelector('.output_shk-item-10')
+        viewModul.innerHTML = ''
+        arrListObj = []
+    }
+    buttClear.addEventListener('click', () => {
+        clearShkElements()
+        inputDataScan.focus()
+    })
+    async function scanerShk() {
+        let v = inputDataScan.value.replace(/\s/g, '');
+        if ((v.length == 8 && v[0] == '*') || (v.length == 9 && v[0] == '*') || (v.length == 12 && v.slice(0, 4) == 'SAFP') || (v.length == 9 && v[0] == '!')) {
+            let data = await searchShk(v);
+            if (data.length) {
+                if (!checkShkExists(arrListObj, data[0].shkId)) {
+                    arrListObj.push(data[0]);
+                    arrListObj = cleanArray(arrListObj);
+                    viewShkElements(arrListObj);
+                } else {
+                    return
+                }
+                let locId = data[0].locationId;
+                if (locId) {
+                    if (locId >= 1 && locId <= 2500) {
+                        if (locId >= 1 && locId <= 1000) {
+                            arrPlayList.push(`/speech/${locId}`);
+                            soundPlayer(arrPlayList);
+                        } else if (locId >= 1001 && locId <= 1999) {
+                            arrPlayList.push(`/speech/1000`);
+                            arrPlayList.push(`/speech/${locId % 1000}`);
+                            soundPlayer(arrPlayList);
+                        } else if (locId == 2000) {
+                            arrPlayList.push(`/speech/${locId}`);
+                            soundPlayer(arrPlayList);
+                        } else if (locId >= 2001 && locId <= 2500) {
+                            arrPlayList.push(`/speech/2000`);
+                            arrPlayList.push(`/speech/${locId % 2000}`);
+                            soundPlayer(arrPlayList);
+                        }
+                    } else {
+                        arrPlayList.push('speech/error');
+                        soundPlayer(arrPlayList);
+                    }
+                } else {
+                    arrPlayList.push('speech/error');
+                    soundPlayer(arrPlayList);
+                }
+            } else {
+                arrPlayList.push('speech/error');
+                soundPlayer(arrPlayList);
+            }
+        } else {
+            arrPlayList.push('speech/error');
+            soundPlayer(arrPlayList);
+        }
+    }
+
+}
+//---------------------------------------------
 setInterval(() => {
     const main = document.querySelector('main')
     const body = document.querySelector('body')
     const head = document.querySelector('head')
-    localStorageStatus()
     //---------------------------------------------
     checkAndApplyStyle()
     //---------------------------------------------
@@ -567,96 +731,53 @@ setInterval(() => {
         }
     }
     if (main && !document.querySelector('.startMenu')) {
-        let settingsNova = getSettingsLocalNova()
         const startMenu = document.createElement('div')
-        const googleIcon = document.createElement('link')
         startMenu.setAttribute('class', 'startMenu')
-        googleIcon.setAttribute('rel', 'stylesheet')
-        googleIcon.setAttribute('href', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined')
         body.appendChild(startMenu)
-        head.appendChild(googleIcon)
         startMenu.innerHTML = htmlContent
         const menuList = document.querySelectorAll('[class^=novaMenu-]')
-        const speedUp = document.querySelector('.button_up_cnt_item-14')
-        const speedDown = document.querySelector('.button_down_cnt_item-14')
-        const currSpeed = document.querySelector('.output_cnt_item-14')
-        const inputDataWave = document.querySelector('.input_item-6')
-        const inputDataScan = document.querySelector('.input_item-10')
         const autoOpenClient = document.querySelector('.input_cnt_item-20')
         const autoOpenReturn = document.querySelector('.input_cnt_item-21')
         const lightClientSearch = document.querySelector('.input_cnt_item-22')
-        const buttClear = document.querySelector('.button_cnt_item-10')
-    //---------------------------------------------
+
+        //---------------------------------------------
         autoOpenClient.addEventListener('change', function () {
-            this.checked ? (settingsNova.set_2 = true, upSettingsLocalNova(settingsNova)) : (settingsNova.set_2 = false, upSettingsLocalNova(settingsNova))
-        })
-    //---------------------------------------------
+            settingsLocalNova.option2 = this.checked;
+            updateSetting('option2', settingsLocalNova.option2);
+        });
+        //---------------------------------------------
         autoOpenReturn.addEventListener('change', function () {
-            this.checked ? (settingsNova.set_3 = true, upSettingsLocalNova(settingsNova)) : (settingsNova.set_3 = false, upSettingsLocalNova(settingsNova))
-        })
+            settingsLocalNova.option3 = this.checked;
+            updateSetting('option3', settingsLocalNova.option3);
+        });
         //---------------------------------------------
         lightClientSearch.addEventListener('change', function () {
-            this.checked ? (settingsNova.set_4 = true, upSettingsLocalNova(settingsNova)) : (settingsNova.set_4 = false, upSettingsLocalNova(settingsNova))
-        })
-    //---------------------------------------------
-        buttClear.addEventListener('click', () => {
-            clearShkElements()
-            inputDataScan.focus()
-        })
-    //---------------------------------------------
-        speedUp.addEventListener('click', () => {
-            if (speedNumb.findIndex(i => i == settingsNova.set_1) < 20) {
-                settingsNova.set_1 = speedNumb[((speedNumb.findIndex(i => i == settingsNova.set_1)) + 1)]
-                upSettingsLocalNova(settingsNova)
-                return currSpeed.innerHTML = settingsNova.set_1
-            } else {
-                return
-            }
-        })
-    //---------------------------------------------
-        speedDown.addEventListener('click', () => {
-            if (speedNumb.findIndex(i => i == settingsNova.set_1) > 0) {
-                settingsNova.set_1 = speedNumb[((speedNumb.findIndex(i => i == settingsNova.set_1)) - 1)]
-                upSettingsLocalNova(settingsNova)
-                return currSpeed.innerHTML = settingsNova.set_1
-            } else {
-                return
-            }
-        })
-    //---------------------------------------------
+            settingsLocalNova.option4 = this.checked;
+            updateSetting('option4', settingsLocalNova.option4);
+        });
+        //---------------------------------------------
         menuList.forEach((menu) => {
             menu.addEventListener("click", function () {
                 const openMenu = document.querySelector('.startMenu').querySelector('.open')
                 switch (this.classList.value) {
-                case 'novaMenu-1':
-                    insertComments()
-                case 'novaMenu-2':
-                    setTimeout(() => {
-                        const inputItem = document.querySelector('.input_item-6')
-                        const inputWavebraker = document.querySelector('input.ant-input.ant-input-lg.ng-pristine.ng-valid.ng-star-inserted.ng-touched')
-                        if(inputItem && inputWavebraker){
-                            inputItem.focus()
-                            inputWavebraker.addEventListener('focus', () => {
-                                inputItem.focus()   
-                            })}
+                    case 'novaMenu-1':
+                        insertComments()
+                        break
+                    case 'novaMenu-2':
+                        filterShk()
+                        break
+                    case 'novaMenu-3':
+                        shkPicker()
+                        break
+                    case 'novaMenu-5':
+                        setTimeout(() => {
+                            autoOpenClient.checked = settingsLocalNova.option2
+                            autoOpenReturn.checked = settingsLocalNova.option3
+                            lightClientSearch.checked = settingsLocalNova.option4
                         }, 300)
-                    break
-                case 'novaMenu-3':
-                    setTimeout(() => {
-                        const inputItem = document.querySelector('.input_item-10')
-                        if(inputItem){inputItem.focus()}
-                    }, 300)
-                    break
-                case 'novaMenu-5':
-                    setTimeout(() => {
-                        currSpeed.innerHTML = settingsNova.set_1
-                        autoOpenClient.checked = settingsNova.set_2
-                        autoOpenReturn.checked = settingsNova.set_3
-                        lightClientSearch.checked = settingsNova.set_4
-                    }, 300)
-                    break
-                default:
-                    break
+                        break
+                    default:
+                        break
                 }
                 this.classList.toggle('open')
                 if (openMenu) {
@@ -664,104 +785,5 @@ setInterval(() => {
                 }
             })
         })
-    //---------------------------------------------
-        inputDataWave.addEventListener('keypress', async function (a) {
-            if (a.key === 'Enter') {
-                let v = inputDataWave.value.replace(/\s/g, '')
-                    getRemainsShk()// Обновляем количество сколько еще принять осталось
-                    if (location.href.includes('acceptance')) {
-                        const inpWave = document.querySelector('.wavebreaker__scan').querySelector('input')
-                        const buttWave = document.querySelector('.wavebreaker__scan').querySelector('button')
-                        if ((v.length == 8 && v[0] == '*') || (v.length == 9 && v[0] == '*') || (v.length == 12 && v.slice(0, 4) == 'SAFP') || (v.length == 9 && v[0] == '!')) {
-                            let s = await searchShk(v)
-                            if (s.length) {
-                                if (s[0].locationTypeId == 6 || s[0].locationTypeId == 3 || s[0].locationTypeId == 1) {
-                                    inpWave.value = v
-                                    inpWave.dispatchEvent(new Event('input', {
-                                        bubbles: true
-                                    }))
-                                    buttWave.click()
-                                } else {
-                                    arrListUrl.push('speech/error')
-                                    soundPlayer(arrListUrl)
-                                    console.log('Error: В пакете нет --> locationTypeId')
-                                }
-                            } else {
-                                arrListUrl.push('speech/error')
-                                soundPlayer(arrListUrl)
-                                console.log('Error: Данного ШК нет на пвз. Массив пуст(')
-                            }
-                        } else if (v.includes('OPLC') || v.includes('WVBR')) {
-                            inpWave.value = v
-                            inpWave.dispatchEvent(new Event('input', {
-                                bubbles: true
-                            }))
-                            buttWave.click()
-                        } else {
-                            arrListUrl.push('speech/error')
-                            soundPlayer(arrListUrl)
-                            console.log('Error: ШК не проходит по условию или это баркод')
-                        }
-                    } else {
-                        return alert('Error: Перейдите в окно волнореза!')
-                    }
-                    inputDataWave.value = ''
-                }
-            })
-    //---------------------------------------------
-        inputDataScan.addEventListener('keypress', function (b) {
-            if (b.key === 'Enter') {
-                async function scanerShk() {
-                    let v = inputDataScan.value.replace(/\s/g, '')
-                    if ((v.length == 8 && v[0] == '*') || (v.length == 9 && v[0] == '*') || (v.length == 12 && v.slice(0, 4) == 'SAFP') || (v.length == 9 && v[0] == '!')) {
-                        let data = await searchShk(v)
-                        if (data.length) {
-                            if (getShkFromArrObject(arrListObj).includes(data[0].shkId)) {
-                                console.log('Shk is pick')
-                            } else {
-                                arrListObj.push(data[0]) 
-                                    arrListObj = cleanArray(arrListObj) //check tut
-                                    viewShkElements(arrListObj)
-                                    buttClear.style.display = 'block'
-                                }
-                                let locId = data[0].locationId
-                                if (locId) {
-                                    if (locId >= 1 && locId <= 2500) {
-                                        if (locId >= 1 && locId <= 1000) {
-                                            arrListUrl.push(`/speech/${locId}`)
-                                            soundPlayer(arrListUrl)
-                                        } else if (locId >= 1001 && locId <= 1999) {
-                                            arrListUrl.push(`/speech/1000`)
-                                            arrListUrl.push(`/speech/${locId%1000}`)
-                                            soundPlayer(arrListUrl)
-                                        } else if (locId == 2000) {
-                                            arrListUrl.push(`/speech/${locId}`)
-                                            soundPlayer(arrListUrl)
-                                        } else if (locId >= 2001 && locId <= 2500) {
-                                            arrListUrl.push(`/speech/2000`)
-                                            arrListUrl.push(`/speech/${locId%2000}`)
-                                            soundPlayer(arrListUrl)
-                                        }
-                                    } else {
-                                        arrListUrl.push('speech/error')
-                                        soundPlayer(arrListUrl)
-                                    }
-                                } else {
-                                    arrListUrl.push('speech/error')
-                                    soundPlayer(arrListUrl)
-                                }
-                            } else {
-                                arrListUrl.push('speech/error')
-                                soundPlayer(arrListUrl)
-                            }
-                        } else {
-                            arrListUrl.push('speech/error')
-                            soundPlayer(arrListUrl)
-                        }
-                    }
-                    scanerShk()
-                    inputDataScan.value = ''
-                }
-            })
     }
 }, 500)

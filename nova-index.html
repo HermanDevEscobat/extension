@@ -8,7 +8,9 @@
         <div class="content-1">
             <div class="cnt_item-1">
                 <div class="title_cnt_item-1">Отзывы ПВЗ</div>
-                <div class="content_cnt_item-1" onclick="event.stopPropagation()"></div>
+                <div class="content_cnt_item-1" onclick="event.stopPropagation()">
+                    <div class="nova_loading-spinner"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -42,19 +44,33 @@
                     <div class="input_cnt_item-10" onclick="event.stopPropagation()">
                         <input type="text" class="input_item-10">
                     </div>
+                    <div class="button_up_cnt_item-14" onclick="event.stopPropagation()" title="Увеличить скорость аудио">
+                        <svg class="iconArrowDrop" xmlns="http://www.w3.org/2000/svg" height="24"
+                            viewBox="0 -960 960 960" width="24">
+                            <path d="m280-400 200-200 200 200H280Z" />
+                        </svg>
+                    </div>
+                    <div class="output_cnt_item-14"></div>
+                    <div class="button_down_cnt_item-14" onclick="event.stopPropagation()" title="Уменьшить скорость аудио">
+                        <svg class="iconArrowDrop" xmlns="http://www.w3.org/2000/svg" height="24"
+                            viewBox="0 -960 960 960" width="24">
+                            <path d="M480-360 280-560h400L480-360Z" />
+                        </svg>
+                    </div>
+                    <div class="button_cnt_item-10" onclick="event.stopPropagation()" title="Очистить список">
+                        <svg class="iconDelete" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
+                            width="24">
+                            <path
+                                d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
             <div class="output_cnt_item-10">
                 <div class="output_shk-item-10">
                 </div>
             </div>
-            <div class="button_cnt_item-10" onclick="event.stopPropagation()">
-                <svg class="iconDelete" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
-                    width="24">
-                    <path
-                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                </svg>
-            </div>
+
         </div>
     </div>
     <div class="novaMenu-4">
@@ -85,20 +101,8 @@
         <div class="content-5">
             <div class="cnt_item-14">
                 <div class="title_cnt_item-14">Настройки</div>
-                <div class="name_sett_cnt_item-14">Скорость</div>
-                <div class="button_up_cnt_item-14" onclick="event.stopPropagation()">
-                    <svg class="iconArrowDrop" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
-                        width="24">
-                        <path d="m280-400 200-200 200 200H280Z" />
-                    </svg>
-                </div>
-                <div class="button_down_cnt_item-14" onclick="event.stopPropagation()">
-                    <svg class="iconArrowDrop" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960"
-                        width="24">
-                        <path d="M480-360 280-560h400L480-360Z" />
-                    </svg>
-                </div>
-                <div class="output_cnt_item-14"></div>
+
+
                 <div class="name_sett_two_cnt_item-14">Автоматическое открытие клиента</div>
                 <div class="checkbox_cnt_item-14">
                     <input type="checkbox" class="input_cnt_item-20" id="autoOpenClient"
