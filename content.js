@@ -8,43 +8,31 @@ let svgInserted = false
 let settingsLocalNova = initializeSettings()
 //---------------------------------------------
 function initializeSettings() {
-    let settings = localStorage.getItem('extensionSettingsNova');
+    let settings = localStorage.getItem('extensionSettingsNova'); // null или {option...}
+    const currentVersionSettings = '1.0'
+    const patternSettings = {
+        version: currentVersionSettings,
+        option1: 1.0,
+        option2: false,
+        option3: false,
+        option4: false,
+        option5: false,
+        option6: false,
+        option7: false,
+        option8: false,
+        option9: false,
+        option10: false
+    }
     if (!settings) {
-        settings = {
-            version: '1.0', // Версия настроек
-            option1: 1.0,
-            option2: false,
-            option3: false,
-            option4: false,
-            option5: false,
-            option6: false,
-            option7: false,
-            option8: false,
-            option9: false,
-            option10: false
-        };
-
-        // Сохраняем настройки в localStorage
-        localStorage.setItem('extensionSettingsNova', JSON.stringify(settings));
+        localStorage.setItem('extensionSettingsNova', JSON.stringify(patternSettings));
     } else {
-        // Если настройки уже есть, проверяем версию и мигрируем данные при необходимости
         let parsedSettings = JSON.parse(settings);
-        if (parsedSettings.version !== '1.0') {
-            // Миграция данных для новой версии настроек
-            // Добавьте соответствующую логику миграции данных здесь
-
-            // Обновляем версию настроек
-            parsedSettings.version = '1.0';
-
-            // Сохраняем обновленные настройки в localStorage
+        if (parsedSettings.version != currentVersionSettings) {
             localStorage.setItem('extensionSettingsNova', JSON.stringify(parsedSettings));
         }
     }
-
-    // Возвращаем объект настроек
-    return JSON.parse(localStorage.getItem('extensionSettingsNova'));
+    return JSON.parse(localStorage.extensionSettingsNova)
 }
-
 //---------------------------------------------
 function addCustomStyle(color) {
     const styleId = 'glowing-border-style';
@@ -501,9 +489,9 @@ async function getRemainsShk() {
 }
 //---------------------------------------------
 function updateSetting(optionName, newValue) {
-    let settings = JSON.parse(localStorage.getItem('settingsLocalNova')) || {};
+    let settings = JSON.parse(localStorage.getItem('extensionSettingsNova')) || {};
     settings[optionName] = newValue;
-    localStorage.setItem('settingsLocalNova', JSON.stringify(settings));
+    localStorage.setItem('extensionSettingsNova', JSON.stringify(settings));
 }
 //---------------------------------------------
 function groupShk(arr) {
@@ -666,10 +654,7 @@ function shkPicker() {
                 if (!checkShkExists(arrListObj, data[0].shkId)) {
                     arrListObj.push(data[0]);
                     arrListObj = cleanArray(arrListObj);
-                    viewShkElements(arrListObj);
-                } else {
-                    return
-                }
+                    viewShkElements(arrListObj);}
                 let locId = data[0].locationId;
                 if (locId) {
                     if (locId >= 1 && locId <= 2500) {
