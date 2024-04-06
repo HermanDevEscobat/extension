@@ -15,13 +15,12 @@
 		"default_popup": "popup.html"
 	},
 	"background": {
-    "service_worker": "background.js"
-  },
+		"service_worker": "background.js"
+	},
 	"content_scripts": [
 		{
 			"matches": [
-				"http://*/pvz/*",
-				"http://*/login"
+				"http://*:1100/*"
 			],
 			"js": [
 				"content.js",
@@ -36,10 +35,18 @@
 		"storage"
 	],
 	"host_permissions": [
-		"http://*/", "https://www.wildberries.ru/*"
-	  ],
-	  "web_accessible_resources": [ {
-		"resources": [ "nova-index.html", "alarm.mp3" ],
-		"matches": [ "<all_urls>" ]
-	  }]
+		"http://*/",
+		"https://www.wildberries.ru/*"
+	],
+	"web_accessible_resources": [
+		{
+			"resources": [
+				"nova-index.html",
+				"alarm.mp3"
+			],
+			"matches": [
+				"<all_urls>"
+			]
+		}
+	]
 }

@@ -2,13 +2,13 @@ const speedNumb = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.2, 
 let soundState = false
 let arrPlayList = []
 let arrListObj = []
-let htmlContent = ''
 let isDataInserted = false
 let svgInserted = false
 let settingsLocalNova = initializeSettings()
+let intervalId
 //---------------------------------------------
 function initializeSettings() {
-    let settings = localStorage.getItem('extensionSettingsNova'); // null или {option...}
+    let settings = localStorage.getItem('extensionSettingsNova');
     const currentVersionSettings = '1.0'
     const patternSettings = {
         version: currentVersionSettings,
@@ -62,7 +62,7 @@ function paintBorder(color) {
         element.classList.add('glowing-border');
     }
 }
-
+//---------------------------------------------
 function checkAndApplyStyle() {
     const isFunctionEnabled = settingsLocalNova.option4;
     const isClientPath = location.pathname === '/pvz/clients';
@@ -86,6 +86,9 @@ c0.1,0.1,0.3,0.1,0.5,0.1l0,0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.
 const emptyStarSVG = `<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" id="star"><path d="M21.9189453,10.1265259c0.0802612-0.546814-0.2979736-1.0551147-0.8447266-1.135376L15.4228516,8.164978l-2.5253906-5.1464844c-0.0909424-0.1569824-0.2214355-0.2873535-0.37854-0.3781128c-0.4960327-0.2866821-1.1306152-0.1170044-1.4173584,0.3790894L8.5771484,8.164978L2.9257812,8.9912109C2.7097168,9.0228882,2.5100098,9.1244507,2.3569946,9.2802734c-0.387146,0.3943481-0.3812256,1.0278931,0.0131226,1.4150391l4.0927734,4.0126953l-0.9658203,5.6640625c-0.0091553,0.0541992-0.013855,0.1090698-0.0139771,0.1641235c-0.0015259,0.5534058,0.4458618,1.0032959,0.9993286,1.0048218c0.163147-0.0002441,0.3237915-0.0404663,0.4677734-0.1171875L12,18.7539062l5.0488281,2.6689453c0.1951294,0.1035767,0.4190063,0.1396484,0.6367798,0.1025391c0.5441895-0.0928345,0.9100952-0.6091309,0.8173218-1.1533203l-0.9658203-5.6640625l4.09375-4.0137329C21.7861328,10.5414429,21.8872681,10.3421021,21.9189453,10.1265259z M16.6503906,14.1766968c-0.1170654,0.1148682-0.1706543,0.2796631-0.1435547,0.4414062l1.0097656,5.9208984l-5.2832031-2.7930298c-0.1463013-0.0761719-0.3204956-0.0761719-0.4667969,0L6.4833984,20.539978l1.0097046-5.921814c0.0271606-0.1617432-0.0264282-0.3265381-0.1435547-0.4414062L3.0702515,9.9814453l5.9121094-0.8642578C9.1456299,9.0927734,9.286499,8.9898682,9.359375,8.8417969L12,3.460022l2.640564,5.3817139c0.072876,0.1480713,0.2138062,0.2509766,0.3770142,0.2753906l5.9130859,0.8632812L16.6503906,14.1766968z"></path></svg>`;
 
 function insertComments() {
+    const container = document.querySelector('.content_cnt_item-1');
+    container.innerHTML = '<div class="nova_loading-spinner"></div>';
+
     fetch(`${location.origin}/api/office/info`)
         .then(response => response.json())
         .then(data => {
@@ -93,8 +96,6 @@ function insertComments() {
             chrome.runtime.sendMessage({ action: 'getComments', officeID }, function (response) {
                 const data = response.comments;
                 if (data && !data.error && data.value && data.value.length > 0) {
-                    const container = document.querySelector('.content_cnt_item-1');
-                    container.innerHTML = '';
                     const commentsList = document.createElement('ul');
                     commentsList.classList.add('comments-list');
 
@@ -125,8 +126,8 @@ function insertComments() {
                         const userId = document.createElement('span');
                         userId.classList.add('content_cnt_item-1_user-id_link');
                         userId.textContent = comment.userId;
-                        userId.style.cursor = 'pointer'; // Добавляем стиль указателя мыши для обозначения кликабельности
-                        userId.title = 'Открыть возвраты клиента'; // Добавляем подсказку ("tooltip")
+                        userId.style.cursor = 'pointer';
+                        userId.title = 'Открыть возвраты клиента';
                         userId.addEventListener('click', () => {
                             window.open(`${location.origin}/pvz/product-returns/choose-goods/${comment.userId}`, '_blank');
                         });
@@ -151,19 +152,19 @@ function insertComments() {
 
                         commentsList.appendChild(listItem);
                     });
-
-
+                    container.innerHTML = '';
                     container.appendChild(commentsList);
                 } else {
                     console.error('Error fetching comments:', data.error);
+                    container.innerHTML = 'Failed to fetch comments';
                 }
             });
         })
         .catch(error => {
             console.error('Error fetching office info:', error);
+            container.innerHTML = 'Failed to fetch office info';
         });
 }
-
 //---------------------------------------------
 function clickOnError() {
     const element = document.querySelector("nz-card.red.pem.ant-card.ant-card-bordered.ng-star-inserted span");
@@ -292,7 +293,6 @@ function listInfoBoxesUpdater() {
                 if (data.length === 0) {
                     return;
                 }
-                const acceptanceBoxSection = document.querySelector('.acceptance-box__list');
                 const acceptedBoxesInfo = [];
                 data.forEach(item => {
                     acceptedBoxesInfo.push({
@@ -319,6 +319,7 @@ function listInfoBoxesUpdater() {
                                 const showCountShkDiv = document.createElement('div');
                                 showCountShkDiv.classList.add('showCountShk');
                                 showCountShkDiv.innerText = boxInfo.shkCount;
+                                showCountShkDiv.style.width = '20px';
                                 boxNumberDiv.parentNode.insertBefore(showCountShkDiv, boxDateDiv);
                                 const viewLink = document.createElement('a');
                                 viewLink.href = `${location.origin}/pvz/location-items/${boxInfo.boxName}/1`;
@@ -343,7 +344,6 @@ function listInfoBoxesUpdater() {
 }
 //---------------------------------------------
 function listInfoClientUpdater() {
-
     if (location.href.includes('/pvz/clients-in-office')) {
         if (!isDataInserted) {
             isDataInserted = true;
@@ -419,24 +419,21 @@ async function getUsersInOfficeAndProcessData() {
     }
 }
 //---------------------------------------------
+function countUniqueValues(arr, key) {
+    const uniqueValues = new Set();
+    arr.forEach(item => {
+        uniqueValues.add(item[key]);
+    });
+    return uniqueValues.size;
+}
+
 function cleanArray(arr) {
-    const uniqueLocationIds = new Set();
-    const result = [];
-
-    for (let i = 0; i < arr.length; i++) {
-        const obj = arr[i];
-        if (!uniqueLocationIds.has(obj.locationId)) {
-            uniqueLocationIds.add(obj.locationId);
-            result.push(obj);
-        }
+    if(countUniqueValues(arr, 'locationId') > 10){
+        const firstElement = arr[0].locationId
+        return arr.filter(obj => obj.locationId !== firstElement)
+    } else {
+        return [...arr]
     }
-
-    if (uniqueLocationIds.size > 10) {
-        const firstLocationId = arr[0].locationId;
-        return result.filter(obj => obj.locationId !== firstLocationId);
-    }
-
-    return result;
 }
 //---------------------------------------------
 function clickSearchAndReturnClient(selector) {
@@ -457,11 +454,9 @@ function clickSearchAndReturnClient(selector) {
 }
 //---------------------------------------------
 async function getContent() {
-    await fetch(chrome.runtime.getURL('/nova-index.html')).then(r => r.text()).then(html => {
-        htmlContent = html
-    })
+    const response = await fetch(chrome.runtime.getURL('/nova-index.html'));
+    return await response.text();
 }
-getContent()
 //---------------------------------------------
 async function decodeShk(shk) {
     return (await fetch(`${location.origin}/api/shk/decode?shk=${encodeURIComponent(shk)}`).then(resp => resp.json()).then(data => {
@@ -477,16 +472,21 @@ async function searchShk(shk) {
 //---------------------------------------------
 async function getRemainsShk() {
     const remainsShk = document.querySelector('.output_cnt_item-6');
-    if (remainsShk) {
-        await fetch(`${location.origin}/api/report/shk`)
-            .then(resp => resp.json())
-            .then(data => {
-                setTimeout(() => {
-                    remainsShk.innerHTML = data.onTransferCount;
-                }, 5000);
-            });
+    const novaMenu2 = document.querySelector('.novaMenu-2');
+    if (remainsShk && novaMenu2 && novaMenu2.classList.contains('open')) {
+        try {
+            const resp = await fetch(`${location.origin}/api/report/shk`);
+            const data = await resp.json();
+            remainsShk.innerHTML = data.onTransferCount;
+        } catch (error) {
+            console.error('Error fetching remains:', error);
+        }
     }
 }
+
+setInterval(async () => {
+    getRemainsShk()
+}, 5000)
 //---------------------------------------------
 function updateSetting(optionName, newValue) {
     let settings = JSON.parse(localStorage.getItem('extensionSettingsNova')) || {};
@@ -537,25 +537,14 @@ function soundPlayer(a) {
 //---------------------------------------------
 function filterShk() {
     const inputItem = document.querySelector('.input_item-6')
-    const inputWavebraker = document.querySelector('input.ant-input.ant-input-lg.ng-pristine.ng-valid.ng-star-inserted.ng-touched');
-
-    setTimeout(() => {
-        if (inputItem && inputWavebraker) {
-            inputItem.focus();
-            inputWavebraker.addEventListener('focus', () => {
-                inputItem.focus();
-            });
-        }
-    }, 300);
-
+    console.log('input', inputItem)
     inputItem.addEventListener('keypress', async function (event) {
         if (event.key === 'Enter') {
             let v = inputItem.value.replace(/\s/g, '');
             if (location.href.includes('acceptance')) {
                 const inpWave = document.querySelector('.wavebreaker__scan input');
                 const buttWave = document.querySelector('.wavebreaker__scan button');
-
-                if ((v.length == 8 && v[0] == '*') || (v.length == 9 && v[0] == '*') || (v.length == 12 && v.slice(0, 4) == 'SAFP') || (v.length == 9 && v[0] == '!')) {
+                if (v.length <= 10 && (v[0] === '*' || v[0] === '!')) {
                     let s = await searchShk(v);
                     if (s.length) {
                         if ([6, 3, 1].includes(s[0].locationTypeId)) {
@@ -600,6 +589,7 @@ function filterShk() {
         console.log(errorMessage);
     }
 }
+
 //---------------------------------------------
 function shkPicker() {
     const buttClear = document.querySelector('.button_cnt_item-10')
@@ -625,11 +615,6 @@ function shkPicker() {
             currSpeed.innerHTML = settingsLocalNova.option1;
         }
     });
-    setTimeout(() => {
-        if (inputDataScan) {
-            inputDataScan.focus();
-        }
-    }, 300);
 
     inputDataScan.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
@@ -648,13 +633,14 @@ function shkPicker() {
     })
     async function scanerShk() {
         let v = inputDataScan.value.replace(/\s/g, '');
-        if ((v.length == 8 && v[0] == '*') || (v.length == 9 && v[0] == '*') || (v.length == 12 && v.slice(0, 4) == 'SAFP') || (v.length == 9 && v[0] == '!')) {
+        if (v.length <= 10 && (v[0] === '*' || v[0] === '!')) {
             let data = await searchShk(v);
             if (data.length) {
                 if (!checkShkExists(arrListObj, data[0].shkId)) {
                     arrListObj.push(data[0]);
                     arrListObj = cleanArray(arrListObj);
-                    viewShkElements(arrListObj);}
+                    viewShkElements(arrListObj);
+                }
                 let locId = data[0].locationId;
                 if (locId) {
                     if (locId >= 1 && locId <= 2500) {
@@ -692,12 +678,96 @@ function shkPicker() {
     }
 
 }
-//---------------------------------------------
-setInterval(() => {
+
+async function checkElementForInject() {
     const main = document.querySelector('main')
     const body = document.querySelector('body')
-    const head = document.querySelector('head')
-    //---------------------------------------------
+    const startMenu = document.querySelector('.startMenu')
+    if (main && body && !startMenu) {
+        clearInterval(injectContent) // завершить setInterval
+        if (main.style.marginRight != '50px') {
+            main.style.marginRight = '50px'
+        }
+        const createStartMenu = document.createElement('div')
+        createStartMenu.setAttribute('class', 'startMenu')
+        body.appendChild(createStartMenu)
+        createStartMenu.innerHTML = await getContent()
+        const menuList = document.querySelectorAll('[class^=novaMenu-]')
+        const autoOpenClient = document.querySelector('.input_cnt_item-20')
+        const autoOpenReturn = document.querySelector('.input_cnt_item-21')
+        const clientIsOpen = document.querySelector('.input_cnt_item-22')
+        const inputItemShkPicker = document.querySelector('input.input_item-10')
+        //---------------------------------------------
+        //Авто-открытие клиента. Настройки
+        autoOpenClient.addEventListener('change', function () {
+            settingsLocalNova.option2 = this.checked;
+            updateSetting('option2', settingsLocalNova.option2);
+        });
+        //---------------------------------------------
+        //Авто-открытие возвратов клиента. Настройки
+        autoOpenReturn.addEventListener('change', function () {
+            settingsLocalNova.option3 = this.checked;
+            updateSetting('option3', settingsLocalNova.option3);
+        });
+        //---------------------------------------------
+        //Подсветка поля ввода. Настройки
+        clientIsOpen.addEventListener('change', function () {
+            settingsLocalNova.option4 = this.checked;
+            updateSetting('option4', settingsLocalNova.option4);
+        });
+        //---------------------------------------------
+        //Функции
+        shkPicker()
+        filterShk()
+        //---------------------------------------------
+        //Модуль на меню
+        menuList.forEach((menu) => {
+            menu.addEventListener("click", function () {
+                const openMenu = document.querySelector('.startMenu').querySelector('.open')
+                switch (this.classList.value) {
+                    case 'novaMenu-1':
+                        insertComments()
+                        break
+                    case 'novaMenu-2':
+                        setTimeout(() => {
+                            const inputItem = document.querySelector('.input_item-6')
+                            const inputWavebraker = document.querySelector('input.ant-input.ant-input-lg.ng-pristine.ng-valid.ng-star-inserted.ng-touched');
+                            if (inputItem && inputWavebraker) {
+                                inputItem.focus();
+                                inputWavebraker.addEventListener('focus', () => {
+                                    inputItem.focus();
+                                });
+                            }
+                        }, 300);
+                        break
+                    case 'novaMenu-3':
+                        setTimeout(() => {
+                            const inputDataScan = document.querySelector('input.input_item-10')
+                            inputDataScan.focus()
+                        }, 300)
+                        break
+                    case 'novaMenu-5':
+                        autoOpenClient.checked = settingsLocalNova.option2
+                        autoOpenReturn.checked = settingsLocalNova.option3
+                        clientIsOpen.checked = settingsLocalNova.option4
+                        break
+                    default:
+                        break
+                }
+                this.classList.toggle('open')
+                if (openMenu) {
+                    openMenu.classList.toggle('open', false);
+                }
+            })
+        })
+    }
+}
+
+const injectContent = setInterval(async () => { await checkElementForInject() }, 100)
+
+//---------------------------------------------
+//Интервальные функции
+function intervalFunction() {
     checkAndApplyStyle()
     //---------------------------------------------
     clickOnError()
@@ -710,65 +780,6 @@ setInterval(() => {
     //---------------------------------------------
     clickSearchAndReturnClient('nz-table')
     //--------------------------------------------- 
-    if (main) {
-        if (main.style.marginRight != '50px') {
-            main.style.marginRight = '50px'
-        }
-    }
-    if (main && !document.querySelector('.startMenu')) {
-        const startMenu = document.createElement('div')
-        startMenu.setAttribute('class', 'startMenu')
-        body.appendChild(startMenu)
-        startMenu.innerHTML = htmlContent
-        const menuList = document.querySelectorAll('[class^=novaMenu-]')
-        const autoOpenClient = document.querySelector('.input_cnt_item-20')
-        const autoOpenReturn = document.querySelector('.input_cnt_item-21')
-        const lightClientSearch = document.querySelector('.input_cnt_item-22')
+}
 
-        //---------------------------------------------
-        autoOpenClient.addEventListener('change', function () {
-            settingsLocalNova.option2 = this.checked;
-            updateSetting('option2', settingsLocalNova.option2);
-        });
-        //---------------------------------------------
-        autoOpenReturn.addEventListener('change', function () {
-            settingsLocalNova.option3 = this.checked;
-            updateSetting('option3', settingsLocalNova.option3);
-        });
-        //---------------------------------------------
-        lightClientSearch.addEventListener('change', function () {
-            settingsLocalNova.option4 = this.checked;
-            updateSetting('option4', settingsLocalNova.option4);
-        });
-        //---------------------------------------------
-        menuList.forEach((menu) => {
-            menu.addEventListener("click", function () {
-                const openMenu = document.querySelector('.startMenu').querySelector('.open')
-                switch (this.classList.value) {
-                    case 'novaMenu-1':
-                        insertComments()
-                        break
-                    case 'novaMenu-2':
-                        filterShk()
-                        break
-                    case 'novaMenu-3':
-                        shkPicker()
-                        break
-                    case 'novaMenu-5':
-                        setTimeout(() => {
-                            autoOpenClient.checked = settingsLocalNova.option2
-                            autoOpenReturn.checked = settingsLocalNova.option3
-                            lightClientSearch.checked = settingsLocalNova.option4
-                        }, 300)
-                        break
-                    default:
-                        break
-                }
-                this.classList.toggle('open')
-                if (openMenu) {
-                    openMenu.classList.toggle('open', false);
-                }
-            })
-        })
-    }
-}, 500)
+setInterval(intervalFunction, 500)

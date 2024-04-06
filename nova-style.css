@@ -39,7 +39,8 @@
 .novaMenu-2.open #bolt,
 .novaMenu-3.open #radar,
 .novaMenu-4.open #monitoring,
-.novaMenu-5.open #settings {
+.novaMenu-5.open #returnBox,
+.novaMenu-6.open #settings {
     fill: #ff0037;
     transition: 0.4s;
     filter: drop-shadow(0 0 5px rgba(255, 0, 55, 0.8));
@@ -107,6 +108,18 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
+
+  .comments-list {
+    list-style-type: none;
+    padding: 0px;
+}
+
+  .comment-item {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.1); /* Прозрачный цвет фона */
+}
 
   @keyframes spin {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
@@ -375,6 +388,18 @@
 .icon_cnt_item-11 {
     grid-area: C;
 }
+/* --------------------------------------------- */
+.novaMenu-5.open .content-5 {
+    display: block;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #001529;
+    right: 70px;
+    width: auto;
+    height: 200px;
+    border-radius: 20px;
+}
 
 /* --------------------------------------------- */
 .cnt_item-14 {
@@ -430,7 +455,7 @@
     pointer-events: auto;
 }
 
-.novaMenu-5.open .content-5 {
+.novaMenu-6.open .content-6 {
     display: block;
     position: fixed;
     top: 50%;
