@@ -12,6 +12,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 sendResponse({ success: false, error: 'Error fetching comments' });
             });
 
-        return true; // Позволяет sendResponse вызываться асинхронно
+        return true;
     }
 });

@@ -1,0 +1,15 @@
+[
+    {
+        "id": 1,
+        "priority": 1,
+        "action": {
+            "type": "redirect",
+            "redirect": {
+                "extensionPath": "/speech/error.mp3"
+            }
+        },
+        "condition": {
+            "urlFilter": "http://*/speech/oksana/error.mp3"
+        }
+    }
+]
