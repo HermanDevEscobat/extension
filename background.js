@@ -15,3 +15,45 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 });
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds: [1, 2],
+        addRules: [
+            {
+                id: 1,
+                priority: 1,
+                condition: {
+                    regexFilter: "^http://.*:1100/speech/maxim/(.*)",
+                },
+                action: {
+                    type: "redirect",
+                    redirect: {
+                        regexSubstitution: `chrome-extension://${chrome.runtime.id}/speech/\\1`,
+                    },
+                },
+            },
+            {
+                id: 2,
+                priority: 2,
+                condition: {
+                    regexFilter: "^http://.*:1100/api/boxes/accept\\?boxShk=.*;.*:.*:(?!2855$)"
+                },
+                action: {
+                    type: "redirect",
+                    redirect: {
+                        regexSubstitution: `chrome-extension://${chrome.runtime.id}/package/errorBox.json`,
+                    },
+                },
+            }
+        ],
+    });
+});
+
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//     if (message.action === "addRedirectRule") {
+//       addRedirectRule();
+//     } else if (message.action === "removeRedirectRule") {
+//       removeRedirectRule();
+//     }
+//   });

@@ -428,7 +428,7 @@ function countUniqueValues(arr, key) {
 }
 
 function cleanArray(arr) {
-    if(countUniqueValues(arr, 'locationId') > 10){
+    if (countUniqueValues(arr, 'locationId') > 10) {
         const firstElement = arr[0].locationId
         return arr.filter(obj => obj.locationId !== firstElement)
     } else {
@@ -720,6 +720,12 @@ async function checkElementForInject() {
         shkPicker()
         filterShk()
         //---------------------------------------------
+        // Пример включения правила
+        // chrome.runtime.sendMessage({ action: "addRedirectRule" });
+
+        // Пример выключения правила
+        // chrome.runtime.sendMessage({ action: "removeRedirectRule" });
+
         //Модуль на меню
         menuList.forEach((menu) => {
             menu.addEventListener("click", function () {
