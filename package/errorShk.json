@@ -1,0 +1,15 @@
+{
+    "cellId": 0,
+    "userId": null,
+    "result": 1,
+    "msg": "Nova: ШК не прошёл фильтрацию!",
+    "acceptedCount": 0,
+    "expectedCount": 0,
+    "placeName": null,
+    "userName": null,
+    "clientName": null,
+    "clientInOffice": false,
+    "needExcise": false,
+    "shkId": 0,
+    "prevLocation": null
+}
